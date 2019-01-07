@@ -1,4 +1,4 @@
-# Device Screenshots (TODO)
+# Device Screenshots
 ## Approach S60
 ![Approach S60](./ApproachS60.png)
 
