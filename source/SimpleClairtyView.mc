@@ -23,11 +23,12 @@ class SimpleClarityView extends WatchUi.WatchFace {
         specialFontHeight = Graphics.getFontHeight(specialFont);
         
         bottomMildFontCutoff = Graphics.getFontDescent(Graphics.FONT_NUMBER_MILD);
-        
     }   
     
     const SCREEN_SIZE = 240;
 	const DAY_MONTH_Y = 50;
+	const SEC_Y = SCREEN_SIZE / 2 + 35;
+	const CALORIES_Y = 25;
 	
     // Fully updates the watch
     function onUpdate(dc) {
@@ -40,16 +41,14 @@ class SimpleClarityView extends WatchUi.WatchFace {
         var clockTime = System.getClockTime();
         renderHrMin(dc, clockTime.hour, clockTime.min);
         renderDayMonth(dc);
-        
-        
+
         // Render all the various sensors
 		renderBatteryPercent(dc);
 		StairMeter.renderStairMeter(dc, SCREEN_SIZE);
 		StepMeter.renderStepMeter(dc, SCREEN_SIZE);
-
 		renderCalories(dc);
 
-		// Render per-second updates (hr and seconds)
+		// Render per-second updates (seconds)
 		onPartialUpdate(dc);
     }
     
@@ -107,8 +106,11 @@ class SimpleClarityView extends WatchUi.WatchFace {
 				rad_in_eff -= 5;
 			}
 		
-			var x_o = x_c + rad_out * Math.cos(a_c + i * spacerAngle);
-			var y_o = y_c + rad_out * Math.sin(a_c + i * spacerAngle);
+			var cosSpacerAngle = Math.cos(a_c + i * spacerAngle);
+			var sinSpacerAngle = Math.sin(a_c + i * spacerAngle);
+			
+			var x_o = x_c + rad_out * cosSpacerAngle;
+			var y_o = y_c + rad_out * sinSpacerAngle;
 	
 			var x_1 = x_c + rad_out * Math.cos(a_c + i * spacerAngle - spacerEnd);
 			var y_1 = y_c + rad_out * Math.sin(a_c + i * spacerAngle - spacerEnd);
@@ -116,17 +118,13 @@ class SimpleClarityView extends WatchUi.WatchFace {
 			var x_2 = x_c + rad_in_eff * Math.cos(a_c + i * spacerAngle - spacerEnd);
 			var y_2 = y_c + rad_in_eff * Math.sin(a_c + i * spacerAngle - spacerEnd);
 	
-			var x_3 = x_c + rad_in_eff * Math.cos(a_c + i * spacerAngle);
-			var y_3 = y_c + rad_in_eff * Math.sin(a_c + i * spacerAngle);
+			var x_3 = x_c + rad_in_eff * cosSpacerAngle;
+			var y_3 = y_c + rad_in_eff * sinSpacerAngle;
 			
 			dc.fillPolygon([[x_o, y_o], [x_1, y_1], [x_2, y_2], [x_3, y_3]]);			
 		}
     }
-    
-	const SEC_Y = SCREEN_SIZE / 2 + 30;
-	const CALORIES_Y = 25;
 
-    var hrMinXRight = 0;
     function renderHrMin(dc, hours, minutes) {
         // Account for 12 / 24 hour time and midnight inconsistencies
         if (!System.getDeviceSettings().is24Hour) {
@@ -143,9 +141,6 @@ class SimpleClarityView extends WatchUi.WatchFace {
 		var y = (SCREEN_SIZE - specialFontHeight) / 2;
         dc.setColor(0xFFFFFF, Graphics.COLOR_BLACK);
         dc.drawText(x, y, specialFont, timeString, Graphics.TEXT_JUSTIFY_CENTER);
-
-		// Used to properly position the seconds         
-		hrMinXRight = x + dim[0] / 2;
     }
     
     function renderCalories(dc) {

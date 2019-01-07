@@ -1,8 +1,15 @@
 # garmin-simple-clarity
 A simple clutter-free watchface for Garmin 240x240 round smartwatches.
 
+![Sample Image](./devices/Vivoactive3-3Music.PNG.png)
+
 ## Legend
-* TODO
+* _Lower Left_: Battery percentage
+* _Upper Left_: Stairs climbed
+* _Right_: Steps walked
+* _Top_: Calories burned
+# _Middle_: Day, Month, Time, Seconds (updates every second)
+* _Bottom_: Daily step goal
 
 ## Supported Devices
 * Approach S60<sup>1</sup>
