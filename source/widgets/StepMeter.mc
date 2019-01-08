@@ -50,7 +50,7 @@ module SimpleClarity {
 			for (var i = 0; i <= 40; i++)
 			{
 				// Change colors to indicate power levels
-				if (i > percentage / 5) {
+				if (i > percentage / 2.5) {
 					dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_BLACK);
 				}
 		
