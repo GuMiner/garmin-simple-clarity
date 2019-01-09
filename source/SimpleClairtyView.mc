@@ -12,6 +12,7 @@ using SimpleClarity.StepMeter;
 class SimpleClarityView extends WatchUi.WatchFace {
 	var specialFont;
 	var specialFontHeight;
+	var specialCharacterFont;
 	
 	// Used to render the seconds properly
 	var bottomMildFontCutoff;
@@ -20,6 +21,7 @@ class SimpleClarityView extends WatchUi.WatchFace {
     function initialize() {
         WatchFace.initialize();
         specialFont = WatchUi.loadResource(Rez.Fonts.TimeFont);
+        specialCharacterFont = WatchUi.loadResource(Rez.Fonts.SpecialCharFont);
         specialFontHeight = Graphics.getFontHeight(specialFont);
         
         bottomMildFontCutoff = Graphics.getFontDescent(Graphics.FONT_NUMBER_MILD);
@@ -28,7 +30,7 @@ class SimpleClarityView extends WatchUi.WatchFace {
     const SCREEN_SIZE = 240;
 	const DAY_MONTH_Y = 50;
 	const SEC_Y = SCREEN_SIZE / 2 + 35;
-	const CALORIES_Y = 25;
+	const CALORIES_Y = 21;
 	
     // Fully updates the watch
     function onUpdate(dc) {
@@ -47,6 +49,7 @@ class SimpleClarityView extends WatchUi.WatchFace {
 		StairMeter.renderStairMeter(dc, SCREEN_SIZE);
 		StepMeter.renderStepMeter(dc, SCREEN_SIZE);
 		renderCalories(dc);
+		renderConnectionInformation(dc);
 
 		// Render per-second updates (seconds)
 		onPartialUpdate(dc);
@@ -136,13 +139,14 @@ class SimpleClarityView extends WatchUi.WatchFace {
     	}
         var timeString = Lang.format("$1$:$2$", [hours, minutes.format("%02d")]);
 
-		var dim = dc.getTextDimensions(timeString, specialFont);
 		var x = SCREEN_SIZE / 2;
 		var y = (SCREEN_SIZE - specialFontHeight) / 2;
         dc.setColor(0xFFFFFF, Graphics.COLOR_BLACK);
         dc.drawText(x, y, specialFont, timeString, Graphics.TEXT_JUSTIFY_CENTER);
     }
     
+    // Saved so the notification information is offset by the caolories width
+    var caloriesWidth = 0;
     function renderCalories(dc) {
     	var cal = GoalTracker.getCalories();
     	if (null == cal) {
@@ -152,6 +156,28 @@ class SimpleClarityView extends WatchUi.WatchFace {
     	var str = cal.format("%d");    
 	    dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_BLACK);
     	dc.drawText(SCREEN_SIZE / 2, CALORIES_Y, Graphics.FONT_XTINY, str, Graphics.TEXT_JUSTIFY_CENTER);
+    	
+    	var dim = dc.getTextDimensions(str, Graphics.FONT_XTINY);
+    	caloriesWidth = dim[0];
+    }
+    
+    const CONNECTION_OFFSET_X = 8;
+    const CONNECTION_OFFSET_Y = 4;
+    function renderConnectionInformation(dc) {
+    	if (System.getDeviceSettings().phoneConnected) {
+    		// This character draws the connected-to-phone icon.
+    		dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_DK_BLUE);
+    		dc.drawText(SCREEN_SIZE / 2 - caloriesWidth / 2 - CONNECTION_OFFSET_X, CALORIES_Y + CONNECTION_OFFSET_Y, specialCharacterFont, " : ", Graphics.TEXT_JUSTIFY_RIGHT);
+
+			var notificationCount = System.getDeviceSettings().notificationCount;
+			if (notificationCount == 0) {
+				// Only appear in (brighter) blue if we have any notifications at all. 
+				dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_DK_GRAY);
+			}
+			
+    		var notificationStr = Lang.format(" $1$ ", [notificationCount]);
+    		dc.drawText(SCREEN_SIZE / 2 + caloriesWidth / 2 + CONNECTION_OFFSET_X, CALORIES_Y + CONNECTION_OFFSET_Y, specialCharacterFont, notificationStr, Graphics.TEXT_JUSTIFY_LEFT);
+    	}
     }
 
 	// Update the seconds on a partial update

@@ -1,4 +1,5 @@
 <resources>
     <bitmap id="LauncherIcon" filename="images/icon.png" />
     <font id="TimeFont" filename="fonts/consolas.fnt" filter="0123456789:"/>
+    <font id="SpecialCharFont" filename="fonts/SegoeUISpecials.fnt" filter="0123456789: "/>
 </resources>
