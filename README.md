@@ -7,7 +7,7 @@ A simple clutter-free watchface for Garmin 240x240 round smartwatches.
 * _Lower Left_: Battery percentage
 * _Upper Left_: Stairs climbed
 * _Right_: Steps walked
-* _Top_: Calories burned
+* _Top_: Phone connectivity (left), Calories burned (center), and Notification count (right).
 * _Middle_: Day, Month, Time, Seconds (updates every second)
 * _Bottom_: Daily step goal
 
