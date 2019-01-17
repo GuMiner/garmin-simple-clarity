@@ -199,7 +199,6 @@ class SimpleClarityView extends WatchUi.WatchFace {
     		var verticalLocation = 0;
     	
     		var notificationLocation = Application.getApp().getProperty("notificationPosition");
-    		System.println( notificationLocation );
     		if (notificationLocation != null && notificationLocation == 0) { // Display on the top
 				halfMiddleWidth = caloriesWidth / 2;
     			verticalLocation = CALORIES_Y + CONNECTION_OFFSET_Y;
