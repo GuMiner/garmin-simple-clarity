@@ -1,3 +1,6 @@
 <resources>
     <string id="AppName">SimpleClarity</string>
+    <string id="NotificationPosition">Notification Position</string>
+    <string id="Top">Top</string>
+    <string id="Bottom">Bottom</string>
 </resources>

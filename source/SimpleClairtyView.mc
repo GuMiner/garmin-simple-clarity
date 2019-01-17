@@ -49,10 +49,13 @@ class SimpleClarityView extends WatchUi.WatchFace {
 		StairMeter.renderStairMeter(dc, SCREEN_SIZE);
 		StepMeter.renderStepMeter(dc, SCREEN_SIZE);
 		renderCalories(dc);
-		renderConnectionInformation(dc);
 
 		// Render per-second updates (seconds)
 		onPartialUpdate(dc);
+		
+		// Must be last, because it may be affected by the seconds / calories location
+		dc.clearClip();
+		renderConnectionInformation(dc);
     }
     
     const DAY_MONTH_SPACE = 5;
@@ -145,7 +148,7 @@ class SimpleClarityView extends WatchUi.WatchFace {
         dc.drawText(x, y, specialFont, timeString, Graphics.TEXT_JUSTIFY_CENTER);
     }
     
-    // Saved so the notification information is offset by the caolories width
+    // Saved so the notification information is offset by the caolories width, if displayed on the top
     var caloriesWidth = 0;
     function renderCalories(dc) {
     	var cal = GoalTracker.getCalories();
@@ -160,28 +163,11 @@ class SimpleClarityView extends WatchUi.WatchFace {
     	var dim = dc.getTextDimensions(str, Graphics.FONT_XTINY);
     	caloriesWidth = dim[0];
     }
-    
-    const CONNECTION_OFFSET_X = 8;
-    const CONNECTION_OFFSET_Y = 4;
-    function renderConnectionInformation(dc) {
-    	if (System.getDeviceSettings().phoneConnected) {
-    		// This character draws the connected-to-phone icon.
-    		dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_DK_BLUE);
-    		dc.drawText(SCREEN_SIZE / 2 - caloriesWidth / 2 - CONNECTION_OFFSET_X, CALORIES_Y + CONNECTION_OFFSET_Y, specialCharacterFont, " : ", Graphics.TEXT_JUSTIFY_RIGHT);
 
-			var notificationCount = System.getDeviceSettings().notificationCount;
-			if (notificationCount == 0) {
-				// Only appear in (brighter) blue if we have any notifications at all. 
-				dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_DK_GRAY);
-			}
-			
-    		var notificationStr = Lang.format(" $1$ ", [notificationCount]);
-    		dc.drawText(SCREEN_SIZE / 2 + caloriesWidth / 2 + CONNECTION_OFFSET_X, CALORIES_Y + CONNECTION_OFFSET_Y, specialCharacterFont, notificationStr, Graphics.TEXT_JUSTIFY_LEFT);
-    	}
-    }
+	// Saved so the notification information is offset by the seconds width, if displayed on the bottom
+	var secondsWidth = 0;
 
 	// Update the seconds on a partial update
-	var lastSecondsWidth = 0;
 	function onPartialUpdate(dc) {
 		var secString = System.getClockTime().sec.format("%d");
 		var fontSize = Graphics.FONT_NUMBER_MILD;
@@ -191,17 +177,50 @@ class SimpleClarityView extends WatchUi.WatchFace {
 		var y = SEC_Y;
 
 		// Used to ensure we don't leave junk pixels behind
-		if (dim[0] < lastSecondsWidth)
+		if (dim[0] < secondsWidth)
 		{
-			dc.setClip(x - dim[0] / 2, y, lastSecondsWidth, dim[1] - bottomMildFontCutoff + FONT_CLIP_WIGGLE);
+			dc.setClip(x - dim[0] / 2, y, secondsWidth, dim[1] - bottomMildFontCutoff + FONT_CLIP_WIGGLE);
 	        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
-	        dc.fillRectangle(x - dim[0] / 2, y, lastSecondsWidth, dim[1] - bottomMildFontCutoff + FONT_CLIP_WIGGLE);
+	        dc.fillRectangle(x - dim[0] / 2, y, secondsWidth, dim[1] - bottomMildFontCutoff + FONT_CLIP_WIGGLE);
 		}
 
 		dc.setClip(x - dim[0] / 2, y, dim[0], dim[1] - bottomMildFontCutoff + FONT_CLIP_WIGGLE);
 		dc.setColor(0xFFFF88, Graphics.COLOR_BLACK);		
 		dc.drawText(x, y, fontSize, secString, Graphics.TEXT_JUSTIFY_CENTER);
 
-		lastSecondsWidth = dim[0];	
+		secondsWidth = dim[0];	
 	}
+    
+    const CONNECTION_OFFSET_X = 8;
+    const CONNECTION_OFFSET_Y = 4;
+    function renderConnectionInformation(dc) {
+    	if (System.getDeviceSettings().phoneConnected) {
+    		var halfMiddleWidth = 0;
+    		var verticalLocation = 0;
+    	
+    		var notificationLocation = Application.getApp().getProperty("notificationPosition");
+    		System.println( notificationLocation );
+    		if (notificationLocation != null && notificationLocation == 0) { // Display on the top
+				halfMiddleWidth = caloriesWidth / 2;
+    			verticalLocation = CALORIES_Y + CONNECTION_OFFSET_Y;
+    		
+    		} else {
+    			halfMiddleWidth = secondsWidth / 2 + 3; // Add a slight bit because seconds are larger
+    			verticalLocation = SEC_Y + CONNECTION_OFFSET_Y + 3;
+    		}
+    		
+    		// This character draws the connected-to-phone icon.
+    		dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_DK_BLUE);
+    		dc.drawText(SCREEN_SIZE / 2 - halfMiddleWidth - CONNECTION_OFFSET_X, verticalLocation, specialCharacterFont, " : ", Graphics.TEXT_JUSTIFY_RIGHT);
+
+			var notificationCount = System.getDeviceSettings().notificationCount;
+			if (notificationCount == 0) {
+				// The notification count only appears in (brighter) blue if we have any notifications at all. 
+				dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_DK_GRAY);
+			}
+			
+    		var notificationStr = Lang.format(" $1$ ", [notificationCount]);
+    		dc.drawText(SCREEN_SIZE / 2 + halfMiddleWidth + CONNECTION_OFFSET_X, verticalLocation, specialCharacterFont, notificationStr, Graphics.TEXT_JUSTIFY_LEFT);
+    	}
+    }
 }
