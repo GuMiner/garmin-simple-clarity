@@ -137,9 +137,12 @@ class SimpleClarityView extends WatchUi.WatchFace {
             if (hours > 12) {
                 hours = hours - 12;
             }
-        } else if (hours == 0) {
+        }
+        
+        if (hours == 0) {
         	hours = 12;
     	}
+    	
         var timeString = Lang.format("$1$:$2$", [hours, minutes.format("%02d")]);
 
 		var x = SCREEN_SIZE / 2;
@@ -169,6 +172,11 @@ class SimpleClarityView extends WatchUi.WatchFace {
 
 	// Update the seconds on a partial update
 	function onPartialUpdate(dc) {
+		var renderSeconds = Application.getApp().getProperty("displaySeconds");
+		if (renderSeconds != null && renderSeconds != 0) {
+			return;
+		}
+		
 		var secString = System.getClockTime().sec.format("%d");
 		var fontSize = Graphics.FONT_NUMBER_MILD;
 		var dim = dc.getTextDimensions(secString, fontSize);

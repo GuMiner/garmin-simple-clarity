@@ -1,6 +1,7 @@
 <resources>
     <properties>
         <property id="notificationPosition" type="number">0</property>
+        <property id="displaySeconds" type="number">0</property>
     </properties>
 
 	<settings>
@@ -8,6 +9,12 @@
        		<settingConfig type="list">
            		<listEntry value="0">@Strings.Top</listEntry>
        	    	<listEntry value="1">@Strings.Bottom</listEntry>
+        	</settingConfig>
+   		</setting>
+ 		<setting propertyKey="@Properties.displaySeconds" title="@Strings.DisplaySeconds">
+       		<settingConfig type="list">
+           		<listEntry value="0">@Strings.Yes</listEntry>
+       	    	<listEntry value="1">@Strings.No</listEntry>
         	</settingConfig>
    		</setting>
 	</settings>

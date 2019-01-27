@@ -3,4 +3,7 @@
     <string id="NotificationPosition">Notification Position</string>
     <string id="Top">Top</string>
     <string id="Bottom">Bottom</string>
+    <string id="DisplaySeconds">Display Seconds</string>
+    <string id="Yes">Yes</string>
+    <string id="No">No</string>
 </resources>
