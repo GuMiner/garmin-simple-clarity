@@ -1,3 +1,4 @@
+using Toybox.Application;
 using Toybox.Graphics;
 using Toybox.Lang;
 using Toybox.Math;
@@ -15,15 +16,22 @@ module SimpleClarity {
 	        	return;
 	        }
 	
-			renderStepText(dc, stepsGoal, SCREEN_SIZE);
+			renderStepText(dc, steps, stepsGoal, SCREEN_SIZE);
 			renderSteps(dc, steps, stepsGoal, SCREEN_SIZE);	
 	    }
 	    
-	    function renderStepText(dc, stepsGoal, SCREEN_SIZE) {
-	    	 dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_BLACK);
-	    	 
-	    	 var str = Lang.format("$1$", [stepsGoal]);
-	    	 dc.drawText(SCREEN_SIZE / 2, STEP_TEXT_Y, Graphics.FONT_XTINY, str, Graphics.TEXT_JUSTIFY_CENTER);
+	    function renderStepText(dc, steps, stepsGoal, SCREEN_SIZE) {
+	    	dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_BLACK);
+     		
+     		var countOrGoal = Application.getApp().getProperty("displayStepCountOrGoal");
+     		var str = null;
+    		if (countOrGoal != null && countOrGoal == 0) { // Display step goal
+    			str = Lang.format("$1$", [stepsGoal]);
+    		} else {
+    			str = Lang.format("$1$", [steps]);
+    		}
+    		
+    		dc.drawText(SCREEN_SIZE / 2, STEP_TEXT_Y, Graphics.FONT_XTINY, str, Graphics.TEXT_JUSTIFY_CENTER);
 	    }
 	    
 	    function renderSteps(dc, steps, stepsGoal, SCREEN_SIZE) {

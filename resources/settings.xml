@@ -2,6 +2,7 @@
     <properties>
         <property id="notificationPosition" type="number">0</property>
         <property id="displaySeconds" type="number">0</property>
+        <property id="displayStepCountOrGoal" type="number">0</property>
     </properties>
 
 	<settings>
@@ -15,6 +16,12 @@
        		<settingConfig type="list">
            		<listEntry value="0">@Strings.Yes</listEntry>
        	    	<listEntry value="1">@Strings.No</listEntry>
+        	</settingConfig>
+   		</setting>
+ 		<setting propertyKey="@Properties.displayStepCountOrGoal" title="@Strings.StepCountOrGoal">
+      		<settingConfig type="list">
+           		<listEntry value="0">@Strings.StepGoal</listEntry>
+       	    	<listEntry value="1">@Strings.StepCount</listEntry>
         	</settingConfig>
    		</setting>
 	</settings>

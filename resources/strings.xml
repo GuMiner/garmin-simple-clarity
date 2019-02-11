@@ -6,4 +6,7 @@
     <string id="DisplaySeconds">Display Seconds</string>
     <string id="Yes">Yes</string>
     <string id="No">No</string>
+    <string id="StepCountOrGoal">Display Step Count or Step Goal</string>
+    <string id="StepCount">Step Count</string>
+    <string id="StepGoal">Step Goal</string>
 </resources>
